@@ -2,9 +2,28 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Notre Histoire – ElfeJolo | Boutique Seconde Main Bourges',
+  title: "L'Histoire d'ElfeJolo | Boutique Jouets Bourges depuis 2019",
   description:
-    "Découvrez l'histoire d'ElfeJolo, la boutique de jouets de seconde main fondée par Cécilia à Bourges. Une aventure humaine née d'une passion pour les enfants et l'environnement.",
+    'ElfeJolo fondée par Cécilia en 2019 : la référence jouets seconde main à Bourges. 4.9/5 sur Google, 4 928 avis, 1 000+ articles. Découvrez notre histoire.',
+};
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Accueil',
+      item: 'https://elfejolo.fr/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Notre histoire',
+      item: 'https://elfejolo.fr/a-propos',
+    },
+  ],
 };
 
 const values = [
@@ -44,6 +63,10 @@ const timeline = [
 export default function AProposPage() {
   return (
     <div className="pt-24 pb-20 px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
@@ -54,7 +77,8 @@ export default function AProposPage() {
             className="text-5xl md:text-6xl font-fredoka text-brown mb-4"
             style={{ fontFamily: 'Fredoka One, cursive' }}
           >
-            Une boutique née d'une <span className="text-coral">passion</span>
+            L'Histoire d'ElfeJolo — La Boutique Jouets de{' '}
+            <span className="text-coral">Bourges depuis 2019</span>
           </h1>
         </div>
 
@@ -101,7 +125,6 @@ export default function AProposPage() {
             Notre <span className="text-coral">parcours</span>
           </h2>
           <div className="relative">
-            {/* Vertical line */}
             <div
               className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 rounded-full md:-translate-x-0.5"
               style={{ background: 'linear-gradient(to bottom, #FF8C6B, #FFD166, #6BCB77)' }}
@@ -114,7 +137,6 @@ export default function AProposPage() {
                     i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
                   }`}
                 >
-                  {/* Content */}
                   <div className={`flex-1 ${i % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'} pl-20 md:pl-0`}>
                     <div
                       className={`inline-block bg-white rounded-2xl px-6 py-4 shadow-sm border border-brown/5 ${
@@ -128,11 +150,9 @@ export default function AProposPage() {
                       <div className="font-nunito text-brown font-bold text-sm">{item.label}</div>
                     </div>
                   </div>
-                  {/* Dot */}
                   <div
                     className={`absolute left-6 md:left-1/2 md:-translate-x-1/2 w-5 h-5 rounded-full border-4 border-white ${item.color} shadow-md`}
                   />
-                  {/* Spacer for alternating layout */}
                   <div className="hidden md:block flex-1" />
                 </div>
               ))}

@@ -1,9 +1,28 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Catalogue – ElfeJolo | Jouets Seconde Main Bourges',
+  title: 'Catalogue Jouets Seconde Main Bourges | 13 Catégories – ElfeJolo',
   description:
-    'Découvrez notre sélection de jeux, jouets, livres, puzzles et déguisements de seconde main à Bourges. Arrivages quotidiens, produits en très bon état.',
+    '13 catégories de jouets d\'occasion à Bourges : peluches, jeux, LEGO, puzzles… Tout inspecté. Arrivages quotidiens. Jusqu\'à -80% vs neuf. 16 Rue Coursarlon.',
+};
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Accueil',
+      item: 'https://elfejolo.fr/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Catalogue',
+      item: 'https://elfejolo.fr/catalogue',
+    },
+  ],
 };
 
 const items = [
@@ -25,21 +44,26 @@ const items = [
 export default function CataloguePage() {
   return (
     <div className="pt-24 pb-20 px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
           <span className="inline-block bg-coral/10 text-coral px-4 py-1 rounded-full text-sm font-bold font-nunito mb-4">
-            🧸 Arrivages tous les jours
+            🔥 Nouveaux arrivages traités chaque matin
           </span>
           <h1
             className="text-5xl md:text-6xl font-fredoka text-brown mb-4"
             style={{ fontFamily: 'Fredoka One, cursive' }}
           >
-            Notre <span className="text-coral">catalogue</span>
+            Jouets de Seconde Main à Bourges —{' '}
+            <span className="text-coral">Notre Sélection</span>
           </h1>
           <p className="text-brown-light font-nunito text-lg max-w-2xl mx-auto mb-4">
-            Tous nos articles sont soigneusement sélectionnés et vérifiés avant d'arriver en boutique.
-            Venez découvrir les nouveautés directement en magasin – ça change chaque jour !
+            13 catégories · +1 000 articles inspectés · Prix jusqu'à -80% vs neuf.
+            Ça change tous les jours !
           </p>
           <span className="inline-block bg-yellow/30 text-brown px-4 py-1.5 rounded-full text-sm font-bold font-nunito">
             13 catégories · Arrivages chaque jour

@@ -1,9 +1,29 @@
 import type { Metadata } from 'next';
+import OpenStatus from '@/components/OpenStatus';
 
 export const metadata: Metadata = {
-  title: "Nous Trouver - ElfeJolo | 16 Rue Coursarlon, Bourges",
+  title: 'ElfeJolo Bourges — Adresse, Horaires & Téléphone | 16 Rue Coursarlon',
   description:
-    "ElfeJolo se trouve au 16 Rue Coursarlon, 18000 Bourges. Ouvert mardi, mercredi, vendredi et samedi. Contactez-nous au 06 73 88 32 26.",
+    'ElfeJolo : 16 Rue Coursarlon 18000 Bourges (parking gratuit). Ouvert mar+mer+ven+sam. ☎ 06 73 88 32 26. Jouets seconde main & dépôt-vente.',
+};
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Accueil',
+      item: 'https://elfejolo.fr/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Nous trouver',
+      item: 'https://elfejolo.fr/contact',
+    },
+  ],
 };
 
 const hours = [
@@ -26,6 +46,10 @@ const payments = [
 export default function ContactPage() {
   return (
     <div className="pt-24 pb-20 px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
@@ -36,8 +60,11 @@ export default function ContactPage() {
             className="text-5xl md:text-6xl font-fredoka text-brown mb-4"
             style={{ fontFamily: 'Fredoka One, cursive' }}
           >
-            Venez nous <span className="text-coral">rendre visite</span>
+            Trouver <span className="text-coral">ElfeJolo</span> à Bourges
           </h1>
+          <div className="flex justify-center mb-4">
+            <OpenStatus />
+          </div>
           <p className="text-brown-light font-nunito text-lg max-w-xl mx-auto">
             On vous attend avec le sourire ! Parking gratuit dans la rue.
           </p>

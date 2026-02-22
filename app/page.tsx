@@ -1,7 +1,8 @@
 'use client';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import OpenStatus from '@/components/OpenStatus';
 
 const categoryColors = [
   'bg-peach',
@@ -28,6 +29,15 @@ const stats = [
   { emoji: '🎉', number: 'Depuis 2019', label: 'On régale Bourges', bg: 'bg-coral/20' },
 ];
 
+const benefits = [
+  { emoji: '💯', title: 'Tout inspecté', desc: 'Chaque jouet contrôlé avant la vente' },
+  { emoji: '💰', title: 'Jusqu\'à -80% vs neuf', desc: 'La qualité sans le prix fort' },
+  { emoji: '📦', title: 'Arrivages quotidiens', desc: 'Chaque visite est une nouvelle surprise' },
+  { emoji: '🌱', title: 'Écolo & malin', desc: 'Moins de déchets, plus de bonheur' },
+  { emoji: '🤝', title: 'Conseil de Cécilia', desc: 'Elle connaît chaque article par cœur' },
+  { emoji: '🚗', title: 'Parking gratuit', desc: 'Facile d\'accès, idéal avec les enfants' },
+];
+
 const testimonials = [
   {
     text: "Véritable caverne d'Ali Baba ! Cécilia connaît parfaitement ses produits et conseille avec passion.",
@@ -46,6 +56,12 @@ const testimonials = [
     author: 'Sophie M.',
     stars: 5,
     bg: 'bg-sage/20',
+  },
+  {
+    text: "J'y vais régulièrement avec mes enfants. Les jouets sont toujours impeccables — pièces complètes, bien nettoyés. Cécilia nous a trouvé un LEGO introuvable ailleurs pour pas cher. On ne repart jamais les mains vides !",
+    author: 'Laurence D.',
+    stars: 5,
+    bg: 'bg-coral/10',
   },
 ];
 
@@ -70,6 +86,33 @@ const howItWorks = [
   },
 ];
 
+const faqs = [
+  {
+    q: 'Où se trouve ElfeJolo à Bourges ?',
+    a: '16 Rue Coursarlon, 18000 Bourges. Parking gratuit dans la rue. Facilement accessible en voiture et à pied depuis le centre-ville.',
+  },
+  {
+    q: 'Quels sont les horaires d\'ouverture ?',
+    a: 'Mardi et mercredi : 10h–12h30 puis 14h30–18h30. Vendredi et samedi : 10h–18h30. Fermé lundi, jeudi et dimanche.',
+  },
+  {
+    q: 'Les jouets sont-ils vraiment en bon état ?',
+    a: 'Absolument. Cécilia inspecte personnellement chaque article. Seuls les jouets en très bon état, nettoyés et vérifiés, sont mis en vente. Les puzzles ont leurs pièces comptées, les jeux de société sont complets.',
+  },
+  {
+    q: 'Comment vendre ou déposer mes jouets chez ElfeJolo ?',
+    a: 'Apportez vos jeux et jouets en boutique durant les heures d\'ouverture. Cécilia les évalue sur place et propose soit un rachat immédiat, soit une mise en dépôt-vente. Vous pouvez appeler le 06 73 88 32 26 avant pour les gros volumes.',
+  },
+  {
+    q: 'Y a-t-il du parking à proximité ?',
+    a: 'Oui ! Stationnement gratuit dans la rue Coursarlon. Idéal quand vous venez avec des cartons à déposer ou que vous repartez avec de belles trouvailles.',
+  },
+  {
+    q: 'Quels moyens de paiement acceptez-vous ?',
+    a: 'Carte bancaire, espèces, chèques et paiement mobile sans contact (NFC).',
+  },
+];
+
 function FloatingEmoji({ emoji, className }: { emoji: string; className: string }) {
   return (
     <div className={`absolute select-none pointer-events-none ${className}`}>
@@ -79,6 +122,9 @@ function FloatingEmoji({ emoji, className }: { emoji: string; className: string 
 }
 
 export default function HomePage() {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [ctaTitle, setCtaTitle] = useState('On vous attend ! 🎉');
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -91,9 +137,36 @@ export default function HomePage() {
       },
       { threshold: 0.1 }
     );
-
     document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const now = new Date();
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Europe/Paris',
+      weekday: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+    const parts = fmt.formatToParts(now);
+    const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
+    const weekdayMap: Record<string, number> = {
+      Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6,
+    };
+    const day = weekdayMap[get('weekday')] ?? -1;
+    const h = parseInt(get('hour')) % 24;
+    const m = parseInt(get('minute'));
+    const time = h * 60 + m;
+
+    let isOpen = false;
+    if (day === 2 || day === 3) {
+      isOpen = (time >= 600 && time < 750) || (time >= 870 && time < 1110);
+    } else if (day === 5 || day === 6) {
+      isOpen = time >= 600 && time < 1110;
+    }
+    setCtaTitle(isOpen ? '⏰ On vous attend aujourd\'hui !' : '📅 On vous attend dès mardi à 10h !');
   }, []);
 
   return (
@@ -135,9 +208,9 @@ export default function HomePage() {
             transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
             className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-coral/20 rounded-full px-5 py-2 mb-8 shadow-sm"
           >
-            <span className="text-xl">⭐</span>
+            <span className="text-xl">🏆</span>
             <span className="text-brown font-bold text-sm font-nunito">
-              4.9/5 · <strong>4 928 avis</strong> · Arrivages <strong>chaque jour</strong> !
+              N°1 jouets seconde main à Bourges · <strong>4.9★</strong> · <strong>4 928 avis</strong>
             </span>
           </motion.div>
 
@@ -145,25 +218,32 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-fredoka text-brown mb-6 leading-tight text-shadow"
+            className="text-5xl md:text-7xl lg:text-8xl font-fredoka text-brown mb-3 leading-tight text-shadow"
             style={{ fontFamily: 'Fredoka One, cursive' }}
           >
-            La boutique
+            La boutique de jouets
             <br />
-            <span className="text-coral">magique</span> de
-            <br />
-            <span className="text-sage">Bourges</span>
+            <span className="text-coral">N°1</span> à Bourges
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.5, delay: 0.28 }}
+            className="text-sm md:text-base text-brown font-bold font-nunito mb-4 tracking-wide"
+          >
+            1 000+ trésors · arrivages chaque jour · prix imbattables
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
             className="text-lg md:text-xl text-brown-light font-nunito max-w-2xl mx-auto mb-10 leading-relaxed"
           >
-            Jeux, jouets, livres et déguisements de{' '}
-            <span className="font-bold text-coral">seconde main</span> soigneusement sélectionnés.
-            Un trésor pour chaque enfant, une planète préservée pour tous.
+            Vos enfants méritent de beaux jouets sans vider votre budget.{' '}
+            <span className="font-bold text-coral">Cécilia sélectionne chaque article à la main.</span>{' '}
+            Venez, vous allez adorer.
           </motion.p>
 
           <motion.div
@@ -176,29 +256,28 @@ export default function HomePage() {
               href="/catalogue"
               className="px-8 py-4 bg-coral text-white rounded-full text-lg font-bold hover:bg-coral-dark transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-coral/30 font-nunito"
             >
-              🧸 Voir le catalogue
+              🧸 Voir le catalogue — ça part vite !
             </Link>
             <Link
               href="/contact"
               className="px-8 py-4 bg-white text-brown border-2 border-brown/10 rounded-full text-lg font-bold hover:border-coral hover:text-coral transition-all duration-200 hover:scale-105 shadow-sm font-nunito"
             >
-              📍 Nous trouver
+              📍 Venir en boutique (parking gratuit)
             </Link>
           </motion.div>
 
-          {/* Address pill — multi-line on small screens */}
+          {/* Address pill */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="mt-10 inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 bg-white/70 backdrop-blur px-5 py-3 rounded-full text-sm text-brown-light font-nunito border border-brown/5"
+            className="mt-10 inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-2 bg-white/70 backdrop-blur px-5 py-3 rounded-full text-sm text-brown-light font-nunito border border-brown/5"
           >
-            <span>📍</span>
-            <span>16 Rue Coursarlon, 18000 Bourges</span>
+            <OpenStatus />
             <span className="text-brown/30 hidden sm:inline">·</span>
-            <span>Mar–Mer : 10h–12h30 / 14h30–18h30</span>
+            <span>📍 16 Rue Coursarlon, Bourges</span>
             <span className="text-brown/30 hidden sm:inline">·</span>
-            <span>Ven–Sam : 10h–18h30</span>
+            <span>🚗 Parking gratuit</span>
           </motion.div>
         </div>
 
@@ -228,6 +307,42 @@ export default function HomePage() {
                   {s.number}
                 </div>
                 <div className="text-brown-light text-sm font-nunito font-bold">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── POURQUOI ELFEJOLO ─── */}
+      <section className="py-16 px-4 bg-white/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-14 reveal opacity-0 translate-y-8 transition-all duration-700">
+            <span className="inline-block bg-coral/10 text-coral px-4 py-1 rounded-full text-sm font-bold font-nunito mb-4">
+              ✨ Nos engagements
+            </span>
+            <h2
+              className="text-4xl md:text-5xl font-fredoka text-brown"
+              style={{ fontFamily: 'Fredoka One, cursive' }}
+            >
+              Ce qui nous rend <span className="text-coral">uniques</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+            {benefits.map((b, i) => (
+              <div
+                key={b.title}
+                className={`reveal opacity-0 translate-y-8 transition-all bg-white rounded-3xl p-6 md:p-8 border border-brown/5 shadow-sm hover:shadow-lg hover:-translate-y-1 text-center`}
+                style={{ transitionDuration: `${500 + i * 100}ms` }}
+              >
+                <div className="text-4xl md:text-5xl mb-3">{b.emoji}</div>
+                <h3
+                  className="font-fredoka text-lg md:text-xl text-brown mb-1"
+                  style={{ fontFamily: 'Fredoka One, cursive' }}
+                >
+                  {b.title}
+                </h3>
+                <p className="text-brown-light text-sm font-nunito">{b.desc}</p>
               </div>
             ))}
           </div>
@@ -297,7 +412,6 @@ export default function HomePage() {
           </div>
 
           <div className="relative grid md:grid-cols-3 gap-6">
-            {/* Connector line on desktop */}
             <div className="hidden md:block absolute top-12 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-coral via-yellow to-sage" />
 
             {howItWorks.map((step, i) => (
@@ -352,7 +466,6 @@ export default function HomePage() {
               et une ambiance chaleureuse qui fait revenir.
             </p>
 
-            {/* Badges */}
             <div className="flex flex-wrap justify-center gap-3 mb-8">
               {['🌱 Ouverte depuis 2019', '⭐ 4.9/5 sur Google', '🔍 Sélection rigoureuse'].map((badge) => (
                 <span key={badge} className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-bold font-nunito border border-white/30">
@@ -418,11 +531,11 @@ export default function HomePage() {
               className="text-4xl md:text-5xl font-fredoka text-brown"
               style={{ fontFamily: 'Fredoka One, cursive' }}
             >
-              Ils nous <span className="text-coral">adorent</span>
+              Plus de <span className="text-coral">4 928 familles</span> nous font confiance
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {testimonials.map((t, i) => (
               <div
                 key={i}
@@ -448,14 +561,67 @@ export default function HomePage() {
           </div>
 
           <div className="text-center mt-10 reveal opacity-0 translate-y-8 transition-all duration-700">
-            <div className="inline-flex items-center gap-3 bg-yellow/20 px-8 py-4 rounded-full">
-              <span className="text-2xl">⭐</span>
-              <div className="font-nunito">
-                <span className="font-bold text-brown text-lg">Note moyenne de </span>
-                <span className="font-bold text-coral text-xl">4.9/5</span>
-                <div className="text-brown-light text-xs">Basé sur 4 928 avis vérifiés</div>
+            <div className="inline-flex flex-col sm:flex-row items-center gap-4">
+              <div className="inline-flex items-center gap-3 bg-yellow/20 px-8 py-4 rounded-full">
+                <span className="text-2xl">⭐</span>
+                <div className="font-nunito">
+                  <span className="font-bold text-brown text-lg">Note moyenne de </span>
+                  <span className="font-bold text-coral text-xl">4.9/5</span>
+                  <div className="text-brown-light text-xs">Basé sur 4 928 avis vérifiés</div>
+                </div>
               </div>
+              <a
+                href="https://www.google.com/maps/place/ElfeJolo/@47.0804,2.3964"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-coral font-bold font-nunito text-sm hover:underline"
+              >
+                Voir tous les avis Google →
+              </a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FAQ ─── */}
+      <section className="py-16 px-4 bg-white/50">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12 reveal opacity-0 translate-y-8 transition-all duration-700">
+            <span className="inline-block bg-yellow/30 text-brown px-4 py-1 rounded-full text-sm font-bold font-nunito mb-4">
+              ❓ On répond à tout
+            </span>
+            <h2
+              className="text-4xl md:text-5xl font-fredoka text-brown"
+              style={{ fontFamily: 'Fredoka One, cursive' }}
+            >
+              Questions fréquentes sur <span className="text-coral">ElfeJolo</span>
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {faqs.map((faq, i) => (
+              <div
+                key={i}
+                className="reveal opacity-0 translate-y-8 transition-all bg-white border border-brown/10 rounded-2xl overflow-hidden"
+                style={{ transitionDuration: `${500 + i * 80}ms` }}
+              >
+                <button
+                  className="w-full text-left px-6 py-5 flex justify-between items-center font-bold text-brown font-nunito hover:bg-peach/30 transition-colors"
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  aria-expanded={openFaq === i}
+                >
+                  <span className="pr-4">{faq.q}</span>
+                  <span className="text-coral text-2xl leading-none flex-shrink-0 font-light">
+                    {openFaq === i ? '−' : '+'}
+                  </span>
+                </button>
+                {openFaq === i && (
+                  <div className="px-6 pb-5 text-brown-light font-nunito leading-relaxed text-sm border-t border-brown/5 pt-3">
+                    {faq.a}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -467,21 +633,23 @@ export default function HomePage() {
             className="reveal opacity-0 translate-y-8 transition-all duration-700 rounded-[3rem] p-12 md:p-16 text-center relative overflow-hidden"
             style={{ background: 'linear-gradient(135deg, #FF8C6B 0%, #FFD166 100%)' }}
           >
-            {/* Floating emojis */}
             <div className="absolute top-4 right-6 text-5xl opacity-40 animate-float">🌟</div>
             <div className="absolute bottom-4 left-6 text-4xl opacity-40 animate-float-delay">🎈</div>
             <div className="absolute top-8 left-10 text-3xl opacity-30 animate-float-delay2">🎀</div>
             <div className="absolute bottom-8 right-12 text-3xl opacity-30 animate-float">🦄</div>
 
+            <div className="mb-4 flex justify-center">
+              <OpenStatus />
+            </div>
+
             <h2
               className="text-4xl md:text-6xl font-fredoka text-white mb-4 text-shadow"
               style={{ fontFamily: 'Fredoka One, cursive' }}
             >
-              Venez nous rendre visite ! 🎉
+              {ctaTitle}
             </h2>
             <p className="text-white/90 font-nunito text-lg mb-8 max-w-xl mx-auto">
-              Arrivages tous les jours. Vous pouvez même apporter vos jouets à vendre !
-              On accepte cartes, chèques et espèces.
+              Arrivages traités chaque matin · Parking gratuit · 4.9★ sur Google
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
